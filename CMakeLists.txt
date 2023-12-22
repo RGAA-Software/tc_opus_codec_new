@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/deps)
 
-aux_source_directory(. OPUS_SRCS)
+set(OPUS_SRCS opus_codec.cpp)
 
-add_library(opus_codec ${OPUS_SRCS} ${EXT_SRCS}) 
-target_link_libraries(opus_codec common Opus::opus)
+add_library(tc_opus_codec ${OPUS_SRCS} ${EXT_SRCS})
+target_link_libraries(tc_opus_codec tc_common Opus::opus)

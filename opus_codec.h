@@ -8,7 +8,7 @@
 
 #include "opus/opus.h"
 
-namespace rgaa 
+namespace tc
 {
 
 	std::string ErrorToString(int error);
@@ -23,14 +23,14 @@ namespace rgaa
 		using opus_uptr = std::unique_ptr<T, OpusDestroyer>;
 	}  // namespace internal
 
-	class Encoder {
+	class OpusAudioEncoder {
 	public:
 		// see documentation at:
 		// https://mf4.xiph.org/jenkins/view/opus/job/opus/ws/doc/html/group__opus__encoder.html#gaa89264fd93c9da70362a0c9b96b9ca88
 		// Fs corresponds to sample_rate
 		//
 		// If expected_loss_percent is positive, FEC will be enabled
-		Encoder(opus_int32 sample_rate, int num_channels, int application,
+        OpusAudioEncoder(opus_int32 sample_rate, int num_channels, int application,
 			int expected_loss_percent = 0);
 
 		// Resets internal state of encoder. This should be called between encoding
@@ -82,12 +82,13 @@ namespace rgaa
 		internal::opus_uptr<OpusEncoder> encoder_;
 	};
 
-	class Decoder {
+    // Decoder
+	class OpusAudioDecoder {
 	public:
 		// see documentation at:
 		// https://mf4.xiph.org/jenkins/view/opus/job/opus/ws/doc/html/group__opus__decoder.html#ga753f6fe0b699c81cfd47d70c8e15a0bd
 		// Fs corresponds to sample_rate
-		Decoder(opus_uint32 sample_rate, int num_channels);
+        OpusAudioDecoder(opus_uint32 sample_rate, int num_channels);
 
 		// Takes a sequence of encoded packets and decodes them. Returns the decoded
 		// audio.

@@ -18,10 +18,10 @@
 #include <vector>
 #include <iostream>
 
-#include "OpusCodec.h"
-#include "RLog.h"
+#include "opus_codec.h"
+#include "tc_common/log.h"
 
-namespace rgaa
+namespace tc
 {
 
 	std::string ErrorToString(int error) {
@@ -55,7 +55,7 @@ namespace rgaa
 		opus_decoder_destroy(decoder);
 	}
 
-	Encoder::Encoder(opus_int32 sample_rate, int num_channels,
+    OpusAudioEncoder::OpusAudioEncoder(opus_int32 sample_rate, int num_channels,
 		int application, int expected_loss_percent)
 		: num_channels_{ num_channels } {
 		int error{};
@@ -73,33 +73,33 @@ namespace rgaa
 		}
 	}
 
-	bool Encoder::ResetState() {
+	bool OpusAudioEncoder::ResetState() {
 		valid_ = Ctl(OPUS_RESET_STATE) == OPUS_OK;
 		return valid_;
 	}
 
-	bool Encoder::SetBitrate(int bitrate) {
+	bool OpusAudioEncoder::SetBitrate(int bitrate) {
 		valid_ = Ctl(OPUS_SET_BITRATE(bitrate)) == OPUS_OK;
 		return valid_;
 	}
 
-	bool Encoder::SetVariableBitrate(int vbr) {
+	bool OpusAudioEncoder::SetVariableBitrate(int vbr) {
 		valid_ = Ctl(OPUS_SET_VBR(vbr)) == OPUS_OK;
 		return valid_;
 	}
 
-	bool Encoder::SetComplexity(int complexity) {
+	bool OpusAudioEncoder::SetComplexity(int complexity) {
 		valid_ = Ctl(OPUS_SET_COMPLEXITY(complexity)) == OPUS_OK;
 		return valid_;
 	}
 
-	int Encoder::GetLookahead() {
+	int OpusAudioEncoder::GetLookahead() {
 		opus_int32 skip{};
 		valid_ = Ctl(OPUS_GET_LOOKAHEAD(&skip)) == OPUS_OK;
 		return skip;
 	}
 
-	std::vector<std::vector<unsigned char>> Encoder::Encode(
+	std::vector<std::vector<unsigned char>> OpusAudioEncoder::Encode(
 		const std::vector<opus_int16>& pcm, int frame_size) {
 		constexpr auto sample_size = sizeof(pcm[0]);
 		const auto frame_length = frame_size * num_channels_ * sample_size;
@@ -117,7 +117,7 @@ namespace rgaa
 		return encoded;
 	}
 
-	std::vector<unsigned char> Encoder::EncodeFrame(
+	std::vector<unsigned char> OpusAudioEncoder::EncodeFrame(
 		const std::vector<opus_int16>::const_iterator& frame_start,
 		int frame_size) {
 		const auto frame_length = (frame_size * num_channels_ * sizeof(*frame_start));
@@ -132,14 +132,15 @@ namespace rgaa
 		return encoded;
 	}
 
-	Decoder::Decoder(opus_uint32 sample_rate, int num_channels)
+    //
+    OpusAudioDecoder::OpusAudioDecoder(opus_uint32 sample_rate, int num_channels)
 		: num_channels_(num_channels) {
 		int error{};
 		decoder_.reset(opus_decoder_create(sample_rate, num_channels, &error));
 		valid_ = error == OPUS_OK;
 	}
 
-	std::vector<opus_int16> Decoder::Decode(
+	std::vector<opus_int16> OpusAudioDecoder::Decode(
 		const std::vector<std::vector<unsigned char>>& packets, int frame_size,
 		bool decode_fec) {
 		std::vector<opus_int16> decoded;
@@ -151,7 +152,7 @@ namespace rgaa
 		return decoded;
 	}
 
-	std::vector<opus_int16> Decoder::Decode(
+	std::vector<opus_int16> OpusAudioDecoder::Decode(
 		const std::vector<unsigned char>& packet, int frame_size, bool decode_fec) {
 		const auto frame_length = (frame_size * num_channels_ * sizeof(opus_int16));
 		std::vector<opus_int16> decoded(frame_length);
@@ -165,7 +166,7 @@ namespace rgaa
 		return decoded;
 	}
 
-	std::vector<opus_int16> Decoder::DecodeDummy(int frame_size) {
+	std::vector<opus_int16> OpusAudioDecoder::DecodeDummy(int frame_size) {
 		const auto frame_length = (frame_size * num_channels_ * sizeof(opus_int16));
 		std::vector<opus_int16> decoded(frame_length);
 		auto num_samples =

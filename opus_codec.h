@@ -62,10 +62,13 @@ namespace tc
 		// pcm must not contain any incomplete packets.
 		// see documentation for pcm and frame_size at:
 		// https://mf4.xiph.org/jenkins/view/opus/job/opus/ws/doc/html/group__opus__encoder.html#gad2d6bf6a9ffb6674879d7605ed073e25
-		std::vector<std::vector<unsigned char>> Encode(
-			const std::vector<opus_int16>& pcm, int frame_size);
+		std::vector<std::vector<unsigned char>> Encode(const std::vector<opus_int16>& pcm, int frame_size);
+
+        std::vector<std::vector<unsigned char>> Encode(const char* data, int data_size, int frame_size);
 
 		int valid() const { return valid_; }
+        int SampleRate() { return sample_rate_; }
+        int Channels() { return num_channels_; }
 
 	private:
 		std::vector<unsigned char> EncodeFrame(
@@ -77,6 +80,7 @@ namespace tc
 			return opus_encoder_ctl(encoder_.get(), request, args...);
 		}
 
+        int sample_rate_{};
 		int num_channels_{};
 		bool valid_{};
 		internal::opus_uptr<OpusEncoder> encoder_;

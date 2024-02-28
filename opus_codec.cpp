@@ -57,7 +57,7 @@ namespace tc
 
     OpusAudioEncoder::OpusAudioEncoder(opus_int32 sample_rate, int num_channels,
 		int application, int expected_loss_percent)
-		: num_channels_{ num_channels } {
+		: sample_rate_{sample_rate}, num_channels_{ num_channels } {
 		int error{};
 		encoder_.reset(
 			opus_encoder_create(sample_rate, num_channels, application, &error));
@@ -116,6 +116,16 @@ namespace tc
 		}
 		return encoded;
 	}
+
+    std::vector<std::vector<unsigned char>> OpusAudioEncoder::Encode(const char* data, int data_size, int frame_size) {
+        std::vector<opus_int16> audio_data(frame_size * this->num_channels_);
+        if (data_size != audio_data.size() * 2) {
+            std::cerr << ("audio frame size invalid .") << std::endl;
+            return {{}};
+        }
+        memcpy((char*)audio_data.data(), data, data_size);
+        return this->Encode(audio_data, frame_size);
+    }
 
 	std::vector<unsigned char> OpusAudioEncoder::EncodeFrame(
 		const std::vector<opus_int16>::const_iterator& frame_start,

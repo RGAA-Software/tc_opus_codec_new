@@ -30,7 +30,7 @@ namespace tc
 		// Fs corresponds to sample_rate
 		//
 		// If expected_loss_percent is positive, FEC will be enabled
-        OpusAudioEncoder(opus_int32 sample_rate, int num_channels, int application,
+        OpusAudioEncoder(opus_int32 sample_rate, int num_channels, int bits, int application,
 			int expected_loss_percent = 0);
 
 		// Resets internal state of encoder. This should be called between encoding
@@ -69,6 +69,7 @@ namespace tc
 		int valid() const { return valid_; }
         int SampleRate() { return sample_rate_; }
         int Channels() { return num_channels_; }
+        int Bits() { return bits_; }
 
 	private:
 		std::vector<unsigned char> EncodeFrame(
@@ -82,6 +83,7 @@ namespace tc
 
         int sample_rate_{};
 		int num_channels_{};
+        int bits_{};
 		bool valid_{};
 		internal::opus_uptr<OpusEncoder> encoder_;
 	};

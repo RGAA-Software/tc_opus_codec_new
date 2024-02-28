@@ -55,9 +55,9 @@ namespace tc
 		opus_decoder_destroy(decoder);
 	}
 
-    OpusAudioEncoder::OpusAudioEncoder(opus_int32 sample_rate, int num_channels,
+    OpusAudioEncoder::OpusAudioEncoder(opus_int32 sample_rate, int num_channels, int bits,
 		int application, int expected_loss_percent)
-		: sample_rate_{sample_rate}, num_channels_{ num_channels } {
+		: sample_rate_{sample_rate}, num_channels_{ num_channels }, bits_{bits} {
 		int error{};
 		encoder_.reset(
 			opus_encoder_create(sample_rate, num_channels, application, &error));

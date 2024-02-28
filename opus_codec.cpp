@@ -118,12 +118,8 @@ namespace tc
 	}
 
     std::vector<std::vector<unsigned char>> OpusAudioEncoder::Encode(const char* data, int data_size, int frame_size) {
-        std::vector<opus_int16> audio_data(frame_size * this->num_channels_);
-        if (data_size != audio_data.size() * 2) {
-            std::cerr << ("audio frame size invalid .") << std::endl;
-            return {{}};
-        }
-        memcpy((char*)audio_data.data(), data, data_size);
+        std::vector<opus_int16> audio_data(data_size/2);
+        memcpy(audio_data.data(), data, data_size);
         return this->Encode(audio_data, frame_size);
     }
 

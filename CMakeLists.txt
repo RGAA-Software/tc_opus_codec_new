@@ -12,5 +12,5 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}../tc_3rdparty/eventbus/src)
 
 set(OPUS_SRCS opus_codec.cpp)
 
-add_library(tc_opus_codec ${OPUS_SRCS} ${EXT_SRCS})
-target_link_libraries(tc_opus_codec tc_common_new Opus::opus)
+add_library(tc_opus_codec_new ${OPUS_SRCS} ${EXT_SRCS})
+target_link_libraries(tc_opus_codec_new tc_common_new Opus::opus)

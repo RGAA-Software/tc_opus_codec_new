@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "opus/opus.h"
+#include "opus.h"
 
 namespace tc
 {
